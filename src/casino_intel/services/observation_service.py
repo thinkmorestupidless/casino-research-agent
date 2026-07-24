@@ -159,4 +159,10 @@ class ObservationService:
         failures += rules_core.validate_normalised_requires_raw(
             obs_input.raw_value, obs_input.normalised_numeric_value
         )
+        # FR-020 percentage range: enforced on every write path, not just the
+        # extraction pipeline — a percentage-typed metric recorded directly
+        # (e.g. traffic_share via the traffic importer) is range-checked too.
+        failures += rules_core.validate_percentage_for_metric(
+            obs_input.metric_id, obs_input.normalised_numeric_value, self.metric_registry
+        )
         return failures
