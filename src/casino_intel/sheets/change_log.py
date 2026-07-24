@@ -39,6 +39,35 @@ class ChangeLogWriter:
         self.client = client
         self.dry_run = dry_run
 
+    def _build_entry(
+        self,
+        *,
+        actor: str,
+        action: ChangeLogAction,
+        sheet_name: str,
+        record_id: str,
+        field_name: str = "",
+        old_value: str = "",
+        new_value: str = "",
+        reason: str = "",
+        source_id: str | None = None,
+        ingestion_run_id: str | None = None,
+    ) -> dict[str, str]:
+        return {
+            "change_id": new_id("change_log"),
+            "timestamp": datetime.now(UTC).isoformat(),
+            "actor": actor,
+            "action": action.value if isinstance(action, ChangeLogAction) else action,
+            "sheet_name": sheet_name,
+            "record_id": record_id,
+            "field_name": field_name,
+            "old_value": old_value,
+            "new_value": new_value,
+            "reason": reason,
+            "source_id": source_id or "",
+            "ingestion_run_id": ingestion_run_id or "",
+        }
+
     def log(
         self,
         *,
@@ -54,21 +83,32 @@ class ChangeLogWriter:
         ingestion_run_id: str | None = None,
     ) -> dict[str, str]:
         """Append one Change Log row. Rows are never updated or deleted."""
-        entry = {
-            "change_id": new_id("change_log"),
-            "timestamp": datetime.now(UTC).isoformat(),
-            "actor": actor,
-            "action": action.value if isinstance(action, ChangeLogAction) else action,
-            "sheet_name": sheet_name,
-            "record_id": record_id,
-            "field_name": field_name,
-            "old_value": old_value,
-            "new_value": new_value,
-            "reason": reason,
-            "source_id": source_id or "",
-            "ingestion_run_id": ingestion_run_id or "",
-        }
+        entry = self._build_entry(
+            actor=actor,
+            action=action,
+            sheet_name=sheet_name,
+            record_id=record_id,
+            field_name=field_name,
+            old_value=old_value,
+            new_value=new_value,
+            reason=reason,
+            source_id=source_id,
+            ingestion_run_id=ingestion_run_id,
+        )
         if not self.dry_run:
             row = escape_row([entry[col] for col in COLUMNS])
             self.client.append_rows(SHEET_NAME, [row])
         return entry
+
+    def log_many(self, entries: list[dict]) -> list[dict[str, str]]:
+        """Append several Change Log rows in a SINGLE append call.
+
+        Each item in ``entries`` is the kwargs mapping accepted by ``log``.
+        Used by bulk writers (e.g. seeding) so one logical batch write
+        produces one Change Log API request, not one per record.
+        """
+        built = [self._build_entry(**e) for e in entries]
+        if built and not self.dry_run:
+            rows = [escape_row([entry[col] for col in COLUMNS]) for entry in built]
+            self.client.append_rows(SHEET_NAME, rows)
+        return built

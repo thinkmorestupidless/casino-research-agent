@@ -117,6 +117,38 @@ def test_record_observation_unknown_metric_routes_to_data_quality(
     assert fake_service.sheets["Data Quality"][1][3] == "unknown_metric_definition"
 
 
+def test_record_observation_percentage_out_of_range_routes_to_data_quality(
+    observation_service, fake_service
+):
+    """FR-020: a percentage-typed metric outside 0-100 must be quarantined
+    on the DIRECT record_observation path too (not only in the extraction
+    pipeline) — e.g. a traffic_share value recorded by the traffic importer."""
+    result = observation_service.record_observation(
+        _base_input(
+            metric_id="traffic_share_paid",
+            raw_value="150",
+            normalised_numeric_value=150.0,
+        ),
+        actor="tester",
+    )
+    assert result is None
+    assert len(fake_service.sheets["Observations"]) == 1  # nothing written
+    assert fake_service.sheets["Data Quality"][1][3] == "percentage_outside_0_100"
+
+
+def test_record_observation_percentage_in_range_is_written(observation_service, fake_service):
+    result = observation_service.record_observation(
+        _base_input(
+            metric_id="traffic_share_paid",
+            raw_value="42",
+            normalised_numeric_value=42.0,
+        ),
+        actor="tester",
+    )
+    assert result is not None and result.written
+    assert len(fake_service.sheets["Observations"]) == 2  # header + the valid row
+
+
 def test_record_observation_missing_source_routes_to_data_quality(
     observation_service, fake_service
 ):

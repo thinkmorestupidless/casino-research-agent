@@ -40,14 +40,12 @@ def validate_extraction_record(
         record.raw_value, record.normalised_numeric_value
     )
 
+    failures += rules_core.validate_percentage_for_metric(
+        record.metric_id, record.normalised_numeric_value, metric_registry
+    )
+
     metric_def = metric_registry.get(record.metric_id)
     if metric_def:
-        allowed_units = metric_def.get("allowed_units", [])
-        if "percent" in allowed_units and record.normalised_numeric_value is not None:
-            failures += rules_core.validate_percentage_range(
-                record.metric_id, record.normalised_numeric_value, is_percentage=True
-            )
-
         subject_types = metric_def.get("subject_types", [])
         if record.subject.type == "brand" and subject_types and "brand" not in subject_types:
             # A metric the registry only defines for operator/market level

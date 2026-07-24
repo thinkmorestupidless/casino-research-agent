@@ -88,6 +88,26 @@ operators:
     ownership_type: private
     headquarters_country: "CW"
     notes: "Crypto-native operator; not licensed in Great Britain — retained as a clearly-separated comparator, not a GB-market peer."
+  - alias: super_group
+    operator_name: "Super Group (SGHC) Limited"
+    ownership_type: public
+    listed_exchange: "NYSE"
+    ticker: "SGHC"
+    headquarters_country: GG
+    website: "https://www.sghc.com"
+  - alias: bally_gamesys
+    operator_name: "Gamesys Group (Bally's Corporation)"
+    ownership_type: public
+    listed_exchange: "NYSE"
+    ticker: "BALY"
+    headquarters_country: GB
+    notes: "Gamesys operating brands sit within Bally's Corporation following the 2021 acquisition."
+    website: "https://www.gamesysgroup.com"
+  - alias: videoslots
+    operator_name: "Videoslots Limited"
+    ownership_type: private
+    headquarters_country: MT
+    website: "https://www.videoslots.com"
 
 brands:
   - alias: bet365_casino
@@ -252,3 +272,32 @@ brands:
     research_priority: 3
     sampling_rationale: "Crypto-native comparator explicitly retained per spec §14 as a comparator that is NOT GB-licensed — never to be blended into GB-market benchmarks; included to contrast product/UX/positioning only."
     notes: "Not licensed for the Great Britain market at time of seeding; access from GB is restricted. Retain all comparisons clearly separated from GB-licensed brand figures."
+
+  - alias: betway_casino
+    brand_name: "Betway Casino"
+    operator_alias: super_group
+    primary_domain: "betway.com"
+    brand_type: hybrid
+    primary_market: GB
+    native_ios_app: true
+    native_android_app: true
+    research_priority: 3
+    sampling_rationale: "Listed-operator (Super Group) sportsbook-led global brand with heavy sponsorship spend — marketing-intensity and operator-diversity comparator."
+
+  - alias: jackpotjoy
+    brand_name: "Jackpotjoy"
+    operator_alias: bally_gamesys
+    primary_domain: "jackpotjoy.com"
+    brand_type: bingo_led
+    primary_market: GB
+    research_priority: 3
+    sampling_rationale: "Bingo-led brand under Gamesys/Bally's — the only bingo-first proposition in the pilot; tests vertical-mix diversity beyond casino/sportsbook."
+
+  - alias: videoslots_brand
+    brand_name: "Videoslots"
+    operator_alias: videoslots
+    primary_domain: "videoslots.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 2
+    sampling_rationale: "Large slots-focused casino-only challenger with an unusually deep game catalogue — content-breadth comparator in the casino-only stratum."

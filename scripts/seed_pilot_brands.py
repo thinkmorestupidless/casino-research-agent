@@ -33,31 +33,42 @@ def load_seed(path: Path = SEED_PATH) -> dict:
 
 
 def run(context: AppContext, seed: dict) -> dict[str, list[str]]:
+    """Seed all operators, then all brands, each as a single batched append.
+
+    Operators are written first (two API calls), their generated ids mapped
+    back to each seed alias, then brands are written with `operator_id`
+    resolved (two more calls) — four Sheets writes total for the whole pilot,
+    well under the per-minute write quota that row-by-row writes exceed.
+    """
     service = RegistryService(context.writer)
 
-    operator_ids: dict[str, str] = {}
-    operator_results = []
-    for op in seed["operators"]:
-        fields = _drop_nulls({k: v for k, v in op.items() if k != "alias"})
-        result = service.register_operator(
-            fields, actor=ACTOR, ingestion_run_id=context.ingestion_run_id
-        )
-        operator_ids[op["alias"]] = result.record_id
-        operator_results.append(result.record_id)
+    operators = seed["operators"]
+    operator_fields = [
+        _drop_nulls({k: v for k, v in op.items() if k != "alias"}) for op in operators
+    ]
+    operator_results = service.register_operators(
+        operator_fields, actor=ACTOR, ingestion_run_id=context.ingestion_run_id
+    )
+    operator_ids = {
+        op["alias"]: r.record_id
+        for op, r in zip(operators, operator_results, strict=True)
+    }
 
-    brand_results = []
+    brand_fields = []
     for brand in seed["brands"]:
-        operator_alias = brand["operator_alias"]
         fields = _drop_nulls(
             {k: v for k, v in brand.items() if k not in ("alias", "operator_alias")}
         )
-        fields["operator_id"] = operator_ids[operator_alias]
-        result = service.register_brand(
-            fields, actor=ACTOR, ingestion_run_id=context.ingestion_run_id
-        )
-        brand_results.append(result.record_id)
+        fields["operator_id"] = operator_ids[brand["operator_alias"]]
+        brand_fields.append(fields)
+    brand_results = service.register_brands(
+        brand_fields, actor=ACTOR, ingestion_run_id=context.ingestion_run_id
+    )
 
-    return {"operators": operator_results, "brands": brand_results}
+    return {
+        "operators": [r.record_id for r in operator_results],
+        "brands": [r.record_id for r in brand_results],
+    }
 
 
 def main() -> None:

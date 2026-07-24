@@ -27,11 +27,11 @@ class _FakeDriveService:
     def files(self):
         return self
 
-    def list(self, q, fields):
+    def list(self, q, fields, **kwargs):
         self._pending = ("list",)
         return self
 
-    def create(self, body, fields="id", media_body=None):
+    def create(self, body, fields="id", media_body=None, **kwargs):
         self._pending = ("create",)
         return self
 

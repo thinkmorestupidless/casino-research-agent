@@ -64,6 +64,22 @@ def validate_percentage_range(
     return []
 
 
+def validate_percentage_for_metric(
+    metric_id: str, value: float | None, registry: MetricRegistry
+) -> list[Failure]:
+    """Range-check `value` iff the registry marks `metric_id` as percentage-
+    typed (``percent`` in its ``allowed_units``). Shared by both the ingest
+    pipeline and `ObservationService` so every write path enforces FR-020's
+    `percentage_outside_0_100`, not just extraction (a percentage recorded
+    directly, e.g. by the traffic importer, is checked too)."""
+    metric_def = registry.get(metric_id)
+    if not metric_def or value is None:
+        return []
+    if "percent" not in metric_def.get("allowed_units", []):
+        return []
+    return validate_percentage_range(metric_id, value, is_percentage=True)
+
+
 def validate_normalised_requires_raw(
     raw_value: str | None, normalised_value: float | None
 ) -> list[Failure]:
