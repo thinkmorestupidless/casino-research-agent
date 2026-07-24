@@ -39,12 +39,16 @@ class _FakeDriveService:
     def files(self) -> _FakeDriveService:
         return self
 
-    def list(self, q: str, fields: str) -> _FakeDriveService:
+    def list(self, q: str, fields: str, **kwargs: object) -> _FakeDriveService:
         self._pending = ("list",)
         return self
 
     def create(
-        self, body: dict, fields: str = "id", media_body: object | None = None
+        self,
+        body: dict,
+        fields: str = "id",
+        media_body: object | None = None,
+        **kwargs: object,
     ) -> _FakeDriveService:
         self._pending = ("create",)
         return self

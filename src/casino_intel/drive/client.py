@@ -61,10 +61,26 @@ class DriveClient:
         if cache_key in self._folder_cache:
             return self._folder_cache[cache_key]
 
-        query = f"name = '{name}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false"
+        query = (
+            f"name = '{name}' and "
+            "mimeType = 'application/vnd.google-apps.folder' and trashed = false"
+        )
         if parent_id:
             query += f" and '{parent_id}' in parents"
-        results = self._service.files().list(q=query, fields="files(id, name)").execute()
+        # supportsAllDrives/includeItemsFromAllDrives are required for the
+        # archive to live on a Shared Drive — service accounts have no My Drive
+        # storage quota, so a Shared Drive (or delegation) is the only place
+        # they can create files (see drive/client.py module note / README).
+        results = (
+            self._service.files()
+            .list(
+                q=query,
+                fields="files(id, name)",
+                supportsAllDrives=True,
+                includeItemsFromAllDrives=True,
+            )
+            .execute()
+        )
         files = results.get("files", [])
         if files:
             folder_id = files[0]["id"]
@@ -75,7 +91,11 @@ class DriveClient:
             }
             if parent_id:
                 metadata["parents"] = [parent_id]
-            folder = self._service.files().create(body=metadata, fields="id").execute()
+            folder = (
+                self._service.files()
+                .create(body=metadata, fields="id", supportsAllDrives=True)
+                .execute()
+            )
             folder_id = folder["id"]
 
         self._folder_cache[cache_key] = folder_id
@@ -99,7 +119,9 @@ class DriveClient:
         media = MediaIoBaseUpload(io.BytesIO(content), mimetype=mime_type, resumable=False)
         metadata = {"name": filename, "parents": [folder_id]}
         uploaded = (
-            self._service.files().create(body=metadata, media_body=media, fields="id").execute()
+            self._service.files()
+            .create(body=metadata, media_body=media, fields="id", supportsAllDrives=True)
+            .execute()
         )
         archive_path = f"{ROOT_FOLDER_NAME}/{relative_folder}/{filename}"
         return uploaded["id"], archive_path, content_hash
