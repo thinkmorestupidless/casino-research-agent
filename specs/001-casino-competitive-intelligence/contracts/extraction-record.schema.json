@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://casino-intel.internal/schemas/extraction-record.schema.json",
+  "title": "Extraction Candidate Record",
+  "description": "Contract emitted by every parser/extractor (HTML, PDF, XLSX/CSV) and consumed by the normalisation/validation stage. One record per candidate fact. Mirrors source doc §11.5 verbatim, extended with required-field enforcement for FR-016/FR-017/FR-020.",
+  "type": "object",
+  "required": [
+    "subject",
+    "metric_id",
+    "raw_value",
+    "source_id",
+    "source_locator",
+    "evidence_type",
+    "confidence",
+    "review_status"
+  ],
+  "properties": {
+    "subject": {
+      "type": "object",
+      "required": ["type", "id"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["brand", "operator", "market", "licence", "offer", "app"]
+        },
+        "id": {
+          "type": "string",
+          "description": "Existing subject record_id. Extractor MUST NOT invent a new subject id; unresolved subjects are routed to Data Quality instead of guessed."
+        }
+      }
+    },
+    "metric_id": {
+      "type": "string",
+      "description": "Must resolve against the metric-definition registry; unresolved metric_id is a validation failure (unknown_metric_definition), not a silently-accepted free-text metric."
+    },
+    "raw_value": {
+      "type": "string",
+      "description": "Value exactly as it appeared in the source, before any normalisation."
+    },
+    "raw_unit": { "type": "string" },
+    "normalised_numeric_value": { "type": "number" },
+    "normalised_text_value": { "type": "string" },
+    "normalised_unit": { "type": "string" },
+    "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "normalised_currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+    "fx_rate": { "type": "number", "exclusiveMinimum": 0 },
+    "fx_rate_date": { "type": "string", "format": "date" },
+    "period_start": { "type": "string", "format": "date" },
+    "period_end": { "type": "string", "format": "date" },
+    "as_of_date": { "type": "string", "format": "date" },
+    "geography": { "type": "string", "pattern": "^[A-Z]{2}$" },
+    "segment": { "type": "string" },
+    "source_id": { "type": "string", "pattern": "^source_" },
+    "document_id": { "type": "string", "pattern": "^document_" },
+    "source_locator": {
+      "type": "string",
+      "description": "Page, table, row, heading, or CSS selector identifying exactly where this value was found."
+    },
+    "verbatim_excerpt": {
+      "type": "string",
+      "maxLength": 500,
+      "description": "Short supporting excerpt only — extractors must not copy full paragraphs/pages (copyright, and FR-016 only requires a short excerpt)."
+    },
+    "evidence_type": {
+      "type": "string",
+      "enum": [
+        "reported_primary",
+        "reported_secondary",
+        "derived",
+        "third_party_estimate",
+        "direct_observation",
+        "subjective_audit",
+        "inferred_range",
+        "unknown"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["high", "medium", "low", "unknown"]
+    },
+    "definition_id": { "type": "string" },
+    "comparability_status": {
+      "type": "string",
+      "enum": ["comparable", "partially_comparable", "not_comparable", "unknown"]
+    },
+    "methodology_note": { "type": "string" },
+    "review_status": {
+      "type": "string",
+      "const": "unreviewed",
+      "description": "Extractors MUST always emit unreviewed — no extractor is permitted to self-approve (FR-017)."
+    }
+  },
+  "additionalProperties": false
+}

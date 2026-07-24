@@ -1,0 +1,78 @@
+# UX and brand audit rubrics (spec.md FR-031/FR-034, source doc §9.14/§9.15).
+# Every audit stores the rubric_version active at capture time so disagreements
+# can be traced to a specific rubric definition (inter-rater calibration, §13.3).
+
+rubric_version: "2026.07.1"
+
+ux_audit_dimensions:
+  game_discovery_score:
+    scale: [1, 5]
+    description: How quickly and reliably a specific game can be found.
+  search_quality_score:
+    scale: [1, 5]
+    description: Relevance and speed of on-site search results.
+  navigation_clarity_score:
+    scale: [1, 5]
+    description: How clearly primary navigation communicates where content lives.
+  promotion_clarity_score:
+    scale: [1, 5]
+    levels:
+      1: Offer is misleading or material terms are difficult to locate.
+      2: Headline is clear but important constraints are obscured.
+      3: Main value and major restrictions are visible with one interaction.
+      4: Major terms are clearly summarised and full terms are easy to inspect.
+      5: Offer, eligibility, wagering and withdrawal consequences are immediately understandable.
+  trust_signal_score:
+    scale: [1, 5]
+    description: Visibility of licensing, security and reputation signals.
+  responsible_gambling_score:
+    scale: [1, 5]
+    description: Prominence and clarity of responsible-gambling information and tools.
+  accessibility_score:
+    scale: [1, 5]
+    description: Usability for users relying on assistive technology or impaired vision/motor control.
+  mobile_usability_score:
+    scale: [1, 5]
+    description: Usability of the mobile web or app experience specifically.
+  visual_clutter_score:
+    scale: [1, 5]
+    description: Degree to which the interface is visually overloaded (1 = cluttered, 5 = clean).
+  performance_score:
+    scale: [1, 5]
+    description: Perceived page-load and interaction responsiveness.
+  overall_ux_score:
+    scale: [1, 5]
+    description: Holistic assessment combining all dimensions above.
+
+brand_audit_dimensions:
+  premium_score:
+    scale: [1, 5]
+  playful_score:
+    scale: [1, 5]
+  trustworthy_score:
+    scale: [1, 5]
+  traditional_score:
+    scale: [1, 5]
+  crypto_native_score:
+    scale: [1, 5]
+  sports_led_score:
+    scale: [1, 5]
+  bonus_led_score:
+    scale: [1, 5]
+  distinctiveness_score:
+    scale: [1, 5]
+    description: How differentiated the visual/tonal identity is versus the competitive set.
+  coherence_score:
+    scale: [1, 5]
+    description: How internally consistent the identity is across touchpoints.
+
+# Every score field above has a paired "<field>_rationale" text field.
+# A populated score without a non-empty rationale is invalid (FR-031) and must
+# be rejected by src/casino_intel/validation/audit_validation.py.
+
+journey_safety_stop_points:
+  - submitting_identity_documents
+  - accepting_binding_terms_on_behalf_of_researcher
+  - depositing_funds
+  - placing_a_wager
+  - withdrawing_funds

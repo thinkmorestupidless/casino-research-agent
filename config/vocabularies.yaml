@@ -1,0 +1,250 @@
+# Controlled vocabularies (spec.md FR-009, source doc §8).
+# This file seeds the `Config` sheet on `initialise-workbook`. After seeding,
+# the Config sheet is the runtime authority (see research.md decision #11) —
+# edit the workbook for day-to-day changes and periodically export back here
+# for version history.
+
+schema_version: "0.1.0"
+
+evidence_types:
+  - reported_primary
+  - reported_secondary
+  - derived
+  - third_party_estimate
+  - direct_observation
+  - subjective_audit
+  - inferred_range
+  - unknown
+
+confidence_values:
+  - high
+  - medium
+  - low
+  - unknown
+
+review_statuses:
+  - unreviewed
+  - machine_checked
+  - human_reviewed
+  - approved
+  - rejected
+
+record_statuses:
+  - active
+  - superseded
+  - rejected
+  - needs_review
+
+comparability_statuses:
+  - comparable
+  - partially_comparable
+  - not_comparable
+  - unknown
+
+source_types:
+  - regulator_statistics
+  - regulator_licence_register
+  - statutory_company_filing
+  - annual_report
+  - interim_report
+  - investor_presentation
+  - earnings_call_transcript
+  - corporate_press_release
+  - operator_website
+  - brand_website
+  - promotion_terms
+  - affiliate_programme
+  - affiliate_listing
+  - advertising_ruling
+  - app_store
+  - review_platform
+  - traffic_intelligence
+  - seo_intelligence
+  - search_trends
+  - news_article
+  - social_media_profile
+  - manual_screen_capture
+  - other
+
+source_statuses:
+  - active
+  - unavailable
+  - superseded
+  - rejected
+
+document_text_extraction_statuses:
+  - not_started
+  - complete
+  - partial
+  - failed
+
+product_verticals:
+  - slots
+  - live_casino
+  - table_games
+  - bingo
+  - sportsbook
+  - poker
+  - crash_games
+
+acquisition_channels:
+  - direct
+  - organic
+  - paid
+  - affiliate
+  - referral
+  - social
+  - display
+  - email
+
+offer_types:
+  - welcome_bonus
+  - reload_bonus
+  - free_spins
+  - cashback
+  - loyalty_vip
+  - no_deposit
+  - odds_boost
+  - other
+
+device_types:
+  - desktop
+  - mobile_web
+  - ios_app
+  - android_app
+
+audit_score_range:
+  min: 1
+  max: 5
+
+operator_ownership_types:
+  - public
+  - private
+  - private_equity
+  - state
+  - unknown
+
+brand_statuses:
+  - active
+  - dormant
+  - closed
+  - acquired
+  - rebranded
+
+brand_types:
+  - casino_only
+  - sportsbook_led
+  - bingo_led
+  - crypto
+  - sweepstakes
+  - hybrid
+
+licence_types:
+  - remote_casino
+  - betting
+  - bingo
+  - software
+  - other
+
+licence_statuses:
+  - active
+  - suspended
+  - surrendered
+  - revoked
+  - unknown
+
+task_types:
+  - discover_source
+  - download_document
+  - parse_document
+  - extract_metric
+  - verify_licence
+  - capture_traffic
+  - capture_search_trends
+  - capture_offer
+  - perform_ux_audit
+  - perform_brand_audit
+  - review_conflict
+  - human_validation
+
+task_statuses:
+  - open
+  - in_progress
+  - blocked
+  - done
+  - cancelled
+
+data_quality_issue_types:
+  - missing_source
+  - missing_reporting_period
+  - invalid_id
+  - duplicate_entity
+  - duplicate_observation
+  - unsupported_currency
+  - percentage_outside_0_100
+  - negative_value_where_prohibited
+  - normalised_value_without_raw_value
+  - derived_metric_without_inputs
+  - subjective_score_without_rationale
+  - stale_observation
+  - conflicting_high_confidence_observations
+  - group_figure_incorrectly_labelled_as_brand_figure
+  - source_url_unavailable
+  - content_hash_changed
+  - unknown_metric_definition
+  - invalid_controlled_vocabulary_value
+
+data_quality_severities:
+  - low
+  - medium
+  - high
+  - critical
+
+data_quality_statuses:
+  - open
+  - in_progress
+  - resolved
+  - wont_fix
+
+change_log_actions:
+  - create
+  - update
+  - supersede
+  - reject
+  - approve
+  - delete_suppression
+
+# ISO 3166-1 alpha-2 (initial market focus; extend as pilot brands require)
+countries:
+  - GB
+  - MT
+  - GI
+  - IE
+  - SE
+  - DK
+  - CA
+  - US
+
+# ISO 4217 (initial set; extend as needed)
+currencies:
+  - GBP
+  - EUR
+  - USD
+  - CAD
+  - SEK
+  - DKK
+
+units:
+  - visits
+  - unique_visitors
+  - seconds
+  - percent
+  - customers
+  - accounts
+  - gbp
+  - eur
+  - usd
+  - index_0_100
+  - count
+  - days
+  - bytes

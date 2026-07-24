@@ -1,0 +1,3 @@
+brand_id,comparison_set_id,anchor_term,query_text,query_type,platform,geography,category,granularity,interest_index
+brand_example001,cmp_gb_casino_2026_06,example casino group,example casino,exact_term,google_trends,GB,gambling,weekly,78
+brand_example002,cmp_gb_casino_2026_06,example casino group,other casino,exact_term,google_trends,GB,gambling,weekly,41

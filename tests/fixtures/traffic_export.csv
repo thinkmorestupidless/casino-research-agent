@@ -1,0 +1,3 @@
+brand_id,domain,provider,geography,device_scope,period_start,period_end,estimated_visits,estimated_unique_visitors,visit_duration_seconds,pages_per_visit,bounce_rate,traffic_share_direct,traffic_share_organic,traffic_share_paid,traffic_share_referral,traffic_share_social,traffic_share_display,top_referral_domains,top_destination_domains,provider_methodology_version
+brand_example001,example-casino.example,similarweb,GB,all,2026-05-01,2026-05-31,1200000,850000,185,4.2,42.5,35.0,28.0,20.0,10.0,5.0,2.0,affiliatehub.example,helpcentre.example,2026.1
+brand_example002,other-casino.example,similarweb,GB,all,2026-05-01,2026-05-31,600000,410000,150,3.1,50.1,30.0,25.0,25.0,12.0,6.0,2.0,affiliatehub.example,helpcentre.example,2026.1

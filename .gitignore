@@ -1,0 +1,27 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# secrets / credentials
+.env
+*.env
+service-account*.json
+*credentials*.json
+
+# local run-state cache (rebuildable, never a system of record)
+.cache/
+*.sqlite3
+
+# exports and archived working files (not source)
+exports/
+.DS_Store

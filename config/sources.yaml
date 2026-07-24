@@ -1,0 +1,26 @@
+# Seed source list (source doc §10.2). These are registered via
+# `casino-intel add-source` at pilot setup time; this file is a convenience
+# seed, not an authoritative list — Sources sheet is authoritative at runtime.
+
+seed_sources:
+  - url: "https://www.gamblingcommission.gov.uk/statistics-and-research/publication/industry-statistics-annual-report-financial-year-april-2024-to-march-2025"
+    source_type: regulator_statistics
+    publisher: UK Gambling Commission
+    title: "UKGC annual industry statistics, April 2024-March 2025"
+    is_primary_source: true
+    paywalled: false
+    authentication_required: false
+  - url: "https://www.gamblingcommission.gov.uk/statistics-and-research/publication/market-overview-operator-data-to-march-2026-published-may-2026"
+    source_type: regulator_statistics
+    publisher: UK Gambling Commission
+    title: "UKGC market overview, operator data to March 2026"
+    is_primary_source: true
+    paywalled: false
+    authentication_required: false
+  - url: "https://www.gamblingcommission.gov.uk/statistics-and-research/publication/gambling-business-data-on-gambling-to-march-2026-published-may-2026"
+    source_type: regulator_statistics
+    publisher: UK Gambling Commission
+    title: "UKGC gambling business data to March 2026"
+    is_primary_source: true
+    paywalled: false
+    authentication_required: false

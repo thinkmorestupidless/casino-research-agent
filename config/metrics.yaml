@@ -1,0 +1,590 @@
+# Metric-definition registry (spec.md FR-009/FR-010, source doc §9.7/§12).
+# Seeds the Config sheet's metric-definition reference on `initialise-workbook`.
+# Every Observation.metric_id / definition_id must resolve against an entry here.
+
+schema_version: "0.1.0"
+
+metrics:
+  # --- Market metrics ---
+  - metric_id: market_ggr
+    display_name: Market gross gaming revenue
+    subject_types: [market]
+    data_type: number
+    allowed_units: [gbp]
+    aggregation: do_not_sum_across_periods
+    comparability_group: market_financial_gbp_period
+    caveats: ["Market-level benchmark, not attributable to a single brand"]
+  - metric_id: market_ggy
+    display_name: Market gross gaming yield
+    subject_types: [market]
+    data_type: number
+    allowed_units: [gbp]
+    aggregation: do_not_sum_across_periods
+    comparability_group: market_financial_gbp_period
+  - metric_id: market_ngr
+    display_name: Market net gaming revenue
+    subject_types: [market]
+    data_type: number
+    allowed_units: [gbp]
+    comparability_group: market_financial_gbp_period
+  - metric_id: market_active_accounts
+    display_name: Market active accounts
+    subject_types: [market]
+    data_type: number
+    allowed_units: [accounts]
+    comparability_group: market_accounts_period
+    caveats: ["Regulator's own account definition applies; not directly comparable to any single brand's active-customer definition"]
+  - metric_id: market_bets_or_spins
+    display_name: Market bets or spins
+    subject_types: [market]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: market_sessions
+    display_name: Market sessions
+    subject_types: [market]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: market_average_session_minutes
+    display_name: Market average session length (minutes)
+    subject_types: [market]
+    data_type: number
+    allowed_units: [seconds]
+  - metric_id: market_sessions_over_one_hour
+    display_name: Market sessions over one hour
+    subject_types: [market]
+    data_type: number
+    allowed_units: [count, percent]
+  - metric_id: market_share
+    display_name: Market share
+    subject_types: [market, operator, brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: vertical_ggr
+    display_name: Vertical gross gaming revenue
+    subject_types: [market]
+    data_type: number
+    allowed_units: [gbp]
+  - metric_id: vertical_ggy
+    display_name: Vertical gross gaming yield
+    subject_types: [market]
+    data_type: number
+    allowed_units: [gbp]
+  - metric_id: vertical_growth_yoy
+    display_name: Vertical growth, year on year
+    subject_types: [market]
+    data_type: number
+    allowed_units: [percent]
+
+  # --- Operator financial metrics ---
+  - metric_id: revenue
+    display_name: Revenue
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+    evidence_types: [reported_primary, reported_secondary]
+    comparability_group: operator_financial_currency_period
+    caveats: ["Revenue is not GGR, NGR, GGY or profit unless the source defines it that way"]
+  - metric_id: gaming_revenue
+    display_name: Gaming revenue
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+    comparability_group: operator_financial_currency_period
+  - metric_id: ggr
+    display_name: Gross gaming revenue
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+    comparability_group: operator_financial_currency_period
+  - metric_id: ggy
+    display_name: Gross gaming yield
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+    comparability_group: operator_financial_currency_period
+  - metric_id: ngr
+    display_name: Net gaming revenue
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+    comparability_group: operator_financial_currency_period
+  - metric_id: adjusted_ebitda
+    display_name: Adjusted EBITDA
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+    comparability_group: operator_financial_currency_period
+  - metric_id: operating_profit
+    display_name: Operating profit
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: net_profit
+    display_name: Net profit
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: marketing_expense
+    display_name: Marketing expense
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+    comparability_group: operator_financial_currency_period
+    caveats: ["Group marketing expenditure is not brand CPA"]
+  - metric_id: sales_and_marketing_expense
+    display_name: Sales and marketing expense
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: affiliate_expense
+    display_name: Affiliate expense
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: bonuses_and_promotions_expense
+    display_name: Bonuses and promotions expense
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: gaming_tax
+    display_name: Gaming tax
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: payment_cost
+    display_name: Payment processing cost
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: capital_expenditure
+    display_name: Capital expenditure
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: cash
+    display_name: Cash
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: net_debt
+    display_name: Net debt
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [gbp, eur, usd]
+  - metric_id: employees
+    display_name: Employees
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [count]
+
+  # --- Customer metrics ---
+  - metric_id: active_customers
+    display_name: Active customers
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [customers]
+    comparability_group: customer_definition_operator_specific
+    caveats: ["'Active customer' definitions vary by operator - not directly comparable across operators without checking the footnote definition"]
+  - metric_id: monthly_active_customers
+    display_name: Monthly active customers
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [customers]
+    comparability_group: customer_definition_operator_specific
+  - metric_id: average_monthly_active_accounts
+    display_name: Average monthly active accounts
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [accounts]
+    comparability_group: customer_definition_operator_specific
+    caveats: ["Denominator may be an average monthly count while related revenue figures cover a full quarter - not lifetime value"]
+  - metric_id: depositing_customers
+    display_name: Depositing customers
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [customers]
+  - metric_id: new_depositing_customers
+    display_name: New depositing customers
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [customers]
+  - metric_id: registered_accounts
+    display_name: Registered accounts
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [accounts]
+    caveats: ["Registered accounts are not depositing customers"]
+  - metric_id: first_time_depositors
+    display_name: First-time depositors
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [customers]
+  - metric_id: average_stake
+    display_name: Average stake
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp]
+  - metric_id: average_deposit
+    display_name: Average deposit
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp]
+  - metric_id: deposit_frequency
+    display_name: Deposit frequency
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: customer_retention_rate
+    display_name: Customer retention rate
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: churn_rate
+    display_name: Churn rate
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: vip_customer_count
+    display_name: VIP customer count
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [customers]
+
+  # --- Traffic and awareness metrics ---
+  - metric_id: estimated_monthly_visits
+    display_name: Estimated monthly website visits
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [visits]
+    evidence_types: [third_party_estimate]
+    aggregation: do_not_sum_across_providers
+    comparability_group: web_visits_provider_period_device
+    caveats:
+      - Not unique visitors
+      - Not active customers
+      - May exclude app traffic
+      - Provider estimates may be inaccurate for small sites
+  - metric_id: estimated_unique_visitors
+    display_name: Estimated unique visitors
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [unique_visitors]
+    evidence_types: [third_party_estimate]
+    aggregation: do_not_sum_across_providers
+    comparability_group: web_visits_provider_period_device
+  - metric_id: visit_duration_seconds
+    display_name: Average visit duration
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [seconds]
+  - metric_id: pages_per_visit
+    display_name: Pages per visit
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: bounce_rate
+    display_name: Bounce rate
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: traffic_share_direct
+    display_name: Traffic share - direct
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: traffic_share_organic
+    display_name: Traffic share - organic
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: traffic_share_paid
+    display_name: Traffic share - paid
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: traffic_share_referral
+    display_name: Traffic share - referral
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: traffic_share_social
+    display_name: Traffic share - social
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: traffic_share_display
+    display_name: Traffic share - display
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: branded_search_interest_index
+    display_name: Branded search interest index
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+    evidence_types: [third_party_estimate]
+    comparability_group: search_interest_comparison_set
+    caveats: ["Google Trends is a relative index, not absolute search volume; only comparable within the same comparison set"]
+  - metric_id: branded_search_volume
+    display_name: Branded search volume
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: share_of_search
+    display_name: Share of search
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    comparability_group: search_interest_comparison_set
+  - metric_id: referring_domains
+    display_name: Referring domains
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: backlinks
+    display_name: Backlinks
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: domain_authority_or_equivalent
+    display_name: Domain authority (or provider equivalent)
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+    aggregation: do_not_sum_across_providers
+
+  # --- App metrics ---
+  - metric_id: app_rating
+    display_name: App store rating
+    subject_types: [app]
+    data_type: number
+    allowed_units: [index_0_100]
+  - metric_id: app_rating_count
+    display_name: App store rating count
+    subject_types: [app]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: app_review_count
+    display_name: App store review count
+    subject_types: [app]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: app_download_estimate
+    display_name: App download estimate
+    subject_types: [app]
+    data_type: number
+    allowed_units: [count]
+    caveats: ["App downloads do not equal active users"]
+  - metric_id: app_rank
+    display_name: App store category rank
+    subject_types: [app]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: app_last_updated_at
+    display_name: App last updated at
+    subject_types: [app]
+    data_type: date
+    allowed_units: []
+  - metric_id: app_version
+    display_name: App version
+    subject_types: [app]
+    data_type: text
+    allowed_units: []
+  - metric_id: app_size_bytes
+    display_name: App size
+    subject_types: [app]
+    data_type: number
+    allowed_units: [bytes]
+
+  # --- Reputation metrics ---
+  - metric_id: review_platform_score
+    display_name: Review platform score
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+    aggregation: do_not_sum_across_providers
+    caveats: ["Review ratings are affected by selection and platform bias"]
+  - metric_id: review_count
+    display_name: Review count
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: complaint_count
+    display_name: Complaint count
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: complaint_resolution_rate
+    display_name: Complaint resolution rate
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    validation_rules: ["0-100"]
+  - metric_id: regulatory_action_count
+    display_name: Regulatory action count
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: advertising_ruling_count
+    display_name: Advertising ruling count
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: sentiment_score
+    display_name: Sentiment score
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+
+  # --- UX metrics ---
+  - metric_id: registration_steps
+    display_name: Registration steps
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: registration_fields
+    display_name: Registration fields
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: time_to_register_seconds
+    display_name: Time to register
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [seconds]
+  - metric_id: kyc_stage
+    display_name: KYC request stage
+    subject_types: [brand]
+    data_type: text
+    allowed_units: []
+  - metric_id: deposit_steps
+    display_name: Deposit steps
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: minimum_deposit
+    display_name: Minimum deposit
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [gbp]
+  - metric_id: withdrawal_methods_count
+    display_name: Withdrawal methods count
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: games_above_fold
+    display_name: Games visible above the fold
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: homepage_promotion_count
+    display_name: Homepage promotion count
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: homepage_load_lcp_ms
+    display_name: Homepage largest contentful paint
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: homepage_cls
+    display_name: Homepage cumulative layout shift
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: homepage_inp_ms
+    display_name: Homepage interaction to next paint
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: search_result_relevance_score
+    display_name: Search result relevance score
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+    evidence_types: [subjective_audit]
+  - metric_id: navigation_depth_to_game
+    display_name: Navigation depth to a specific game
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [count]
+  - metric_id: responsible_gambling_prominence_score
+    display_name: Responsible gambling prominence score
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+    evidence_types: [subjective_audit]
+  - metric_id: licence_visibility_score
+    display_name: Licence visibility score
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+    evidence_types: [subjective_audit]
+  - metric_id: terms_clarity_score
+    display_name: Terms clarity score
+    subject_types: [brand, offer]
+    data_type: number
+    allowed_units: [index_0_100]
+    evidence_types: [subjective_audit]
+  - metric_id: accessibility_score
+    display_name: Accessibility score
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [index_0_100]
+    evidence_types: [subjective_audit]
+
+  # --- Derived metrics (formulas live in src/casino_intel/derivation/formulas.py) ---
+  - metric_id: revenue_per_active_customer
+    display_name: Revenue per active customer
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp]
+    evidence_types: [derived]
+    comparability_group: derived_revenue_per_customer
+  - metric_id: ggy_per_average_monthly_active_account
+    display_name: GGY per average monthly active account
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [gbp]
+    evidence_types: [derived]
+    comparability_group: derived_ggy_per_account
+    caveats: ["Not equivalent to per-customer lifetime value - numerator/denominator periods differ"]
+  - metric_id: marketing_pct_revenue
+    display_name: Marketing expense as % of revenue
+    subject_types: [operator, brand]
+    data_type: number
+    allowed_units: [percent]
+    evidence_types: [derived]
+    comparability_group: derived_marketing_pct_revenue
+  - metric_id: adjusted_ebitda_margin
+    display_name: Adjusted EBITDA margin
+    subject_types: [operator]
+    data_type: number
+    allowed_units: [percent]
+    evidence_types: [derived]
+    comparability_group: derived_ebitda_margin
+  - metric_id: traffic_growth_yoy
+    display_name: Traffic growth, year on year
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [percent]
+    evidence_types: [derived]
+    comparability_group: derived_traffic_growth
+  - metric_id: indicative_cpa_range
+    display_name: Indicative CPA range
+    subject_types: [brand]
+    data_type: number
+    allowed_units: [gbp]
+    evidence_types: [inferred_range]
+    comparability_group: derived_cpa_range
+    caveats: ["No single mandatory formula; assumptions must always be recorded"]

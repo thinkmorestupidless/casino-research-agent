@@ -1,0 +1,254 @@
+# Pilot brand/operator seed (spec §14, User Story 1 T038).
+#
+# These are real, publicly known GB-facing online casino brands and their
+# operating companies — registering that a brand exists and who operates it
+# is public master data, not a commercial claim requiring the evidence model
+# (that applies to Observations: traffic, revenue, etc., captured later via
+# ingestion). Fields left blank (domains, exact launch dates) are marked
+# `last_verified_at: null` and should be confirmed during Phase 2 ingestion
+# rather than trusted as pre-verified.
+#
+# Stratification (source doc §14): large listed operators, casino-only
+# challengers, sportsbook-led casino brands, mobile-first brands, premium/VIP
+# brands, bonus-led brands, entertainment-led brands, one crypto-native
+# comparator clearly separated from GB-licensed brands, and a spread of
+# expected traffic/sentiment tiers (to be measured, not assumed, via later
+# Traffic/Reputation observations).
+
+operators:
+  - alias: bet365
+    operator_name: "bet365 Group Limited"
+    ownership_type: private
+    headquarters_country: GB
+    website: "https://www.bet365.com"
+  - alias: flutter
+    operator_name: "Flutter Entertainment plc"
+    ownership_type: public
+    listed_exchange: "LSE/NYSE"
+    ticker: "FLTR"
+    headquarters_country: IE
+    website: "https://www.flutter.com"
+  - alias: evoke
+    operator_name: "Evoke plc"
+    former_names: ["888 Holdings plc"]
+    ownership_type: public
+    listed_exchange: "LSE"
+    ticker: "EVOK"
+    headquarters_country: GB
+    website: "https://www.evokeplc.com"
+  - alias: entain
+    operator_name: "Entain plc"
+    ownership_type: public
+    listed_exchange: "LSE"
+    ticker: "ENT"
+    headquarters_country: GB
+    website: "https://entaingroup.com"
+  - alias: kindred
+    operator_name: "Kindred Group plc"
+    ownership_type: public
+    listed_exchange: "Nasdaq Stockholm"
+    ticker: "KIND-SDB"
+    headquarters_country: MT
+    website: "https://www.kindredgroup.com"
+  - alias: leovegas
+    operator_name: "LeoVegas Group"
+    ownership_type: private
+    headquarters_country: MT
+    notes: "Acquired by MGM Resorts International in 2022."
+    website: "https://leovegasgroup.com"
+  - alias: casumo
+    operator_name: "Casumo Group"
+    ownership_type: private
+    headquarters_country: MT
+    website: "https://www.casumo.com"
+  - alias: skillonnet
+    operator_name: "SkillOnNet Ltd"
+    ownership_type: private
+    headquarters_country: MT
+    website: "https://www.skillonnet.com"
+  - alias: rank
+    operator_name: "The Rank Group plc"
+    ownership_type: public
+    listed_exchange: "LSE"
+    ticker: "RNK"
+    headquarters_country: GB
+    website: "https://www.rank.com"
+  - alias: genting
+    operator_name: "Genting UK"
+    ownership_type: private
+    headquarters_country: GB
+    website: "https://www.gentingcasino.com"
+  - alias: cassava
+    operator_name: "Cassava Enterprises (Gibraltar) Limited"
+    ownership_type: private
+    headquarters_country: GI
+    notes: "Operates within the Evoke plc group."
+  - alias: medium_rare
+    operator_name: "Medium Rare N.V."
+    ownership_type: private
+    headquarters_country: "CW"
+    notes: "Crypto-native operator; not licensed in Great Britain — retained as a clearly-separated comparator, not a GB-market peer."
+
+brands:
+  - alias: bet365_casino
+    brand_name: "bet365 Casino"
+    operator_alias: bet365
+    primary_domain: "bet365.com"
+    brand_type: hybrid
+    primary_market: GB
+    native_ios_app: true
+    native_android_app: true
+    research_priority: 5
+    sampling_rationale: "Largest private UK-headquartered sportsbook-led operator; benchmark for scale and sportsbook-to-casino cross-sell."
+
+  - alias: sky_vegas
+    brand_name: "Sky Vegas"
+    operator_alias: flutter
+    primary_domain: "skyvegas.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 4
+    sampling_rationale: "Large listed-operator, casino-only brand under Flutter Entertainment — benchmark for a focused (non-sportsbook) proposition at scale."
+
+  - alias: paddy_power_casino
+    brand_name: "Paddy Power Casino"
+    operator_alias: flutter
+    primary_domain: "paddypower.com"
+    brand_type: hybrid
+    primary_market: GB
+    research_priority: 3
+    sampling_rationale: "Sportsbook-led casino brand with a distinctive, irreverent tone of voice — brand-positioning contrast case."
+
+  - alias: william_hill_casino
+    brand_name: "William Hill Casino"
+    operator_alias: evoke
+    primary_domain: "williamhill.com"
+    brand_type: hybrid
+    primary_market: GB
+    research_priority: 4
+    sampling_rationale: "Large listed-operator legacy high-street brand; benchmark for a traditional/trustworthy positioning."
+
+  - alias: ladbrokes_casino
+    brand_name: "Ladbrokes Casino"
+    operator_alias: entain
+    primary_domain: "ladbrokes.com"
+    brand_type: hybrid
+    primary_market: GB
+    research_priority: 3
+    sampling_rationale: "Large listed-operator (Entain) sportsbook-led brand — operator-diversity comparator to Flutter/Evoke brands."
+
+  - alias: coral_casino
+    brand_name: "Coral Casino"
+    operator_alias: entain
+    primary_domain: "coral.co.uk"
+    brand_type: hybrid
+    primary_market: GB
+    research_priority: 2
+    sampling_rationale: "Second Entain-owned brand in the pilot — tests within-operator brand differentiation."
+
+  - alias: eight88_casino
+    brand_name: "888 Casino"
+    operator_alias: evoke
+    primary_domain: "888casino.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 4
+    sampling_rationale: "Large listed-operator, casino-only global brand — benchmark for an internationally-recognised casino-first proposition."
+
+  - alias: betfair_casino
+    brand_name: "Betfair Casino"
+    operator_alias: flutter
+    primary_domain: "betfair.com"
+    brand_type: hybrid
+    primary_market: GB
+    research_priority: 2
+    sampling_rationale: "Third Flutter-owned brand in the pilot, exchange-betting heritage — further within-operator differentiation data point."
+
+  - alias: unibet_casino
+    brand_name: "Unibet Casino"
+    operator_alias: kindred
+    primary_domain: "unibet.co.uk"
+    brand_type: hybrid
+    primary_market: GB
+    research_priority: 3
+    sampling_rationale: "Listed-operator (Kindred) sportsbook-led brand headquartered outside the UK — jurisdictional/operator diversity."
+
+  - alias: leovegas_brand
+    brand_name: "LeoVegas"
+    operator_alias: leovegas
+    primary_domain: "leovegas.com"
+    brand_type: casino_only
+    primary_market: GB
+    mobile_web: true
+    native_ios_app: true
+    native_android_app: true
+    research_priority: 4
+    sampling_rationale: "Mobile-first casino-only challenger brand (\"King of Mobile Casino\" positioning) — mobile-first stratum."
+
+  - alias: casumo_brand
+    brand_name: "Casumo"
+    operator_alias: casumo
+    primary_domain: "casumo.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 4
+    sampling_rationale: "Distinctive, entertainment/gamification-led challenger brand — entertainment-led stratum and design-differentiation case."
+
+  - alias: playojo
+    brand_name: "PlayOJO"
+    operator_alias: skillonnet
+    primary_domain: "playojo.com"
+    brand_type: casino_only
+    primary_market: GB
+    mobile_web: true
+    research_priority: 4
+    sampling_rationale: "Bonus-mechanics-led challenger brand built around a \"no wagering requirements\" proposition — bonus-led stratum."
+
+  - alias: grosvenor_casino
+    brand_name: "Grosvenor Casino"
+    operator_alias: rank
+    primary_domain: "grosvenorcasinos.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 3
+    sampling_rationale: "Listed-operator brand with land-based casino heritage — premium/traditional positioning stratum."
+
+  - alias: genting_casino
+    brand_name: "Genting Casino"
+    operator_alias: genting
+    primary_domain: "gentingcasino.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 2
+    sampling_rationale: "Premium/VIP-oriented brand with land-based casino heritage — second premium-positioning comparator to Grosvenor."
+
+  - alias: mr_green_casino
+    brand_name: "Mr Green"
+    operator_alias: evoke
+    primary_domain: "mrgreen.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 2
+    sampling_rationale: "Third Evoke-owned brand in the pilot, distinct \"gentleman\" brand character — further within-operator differentiation."
+
+  - alias: wink_slots
+    brand_name: "Wink Slots"
+    operator_alias: cassava
+    primary_domain: "winkslots.com"
+    brand_type: casino_only
+    primary_market: GB
+    research_priority: 1
+    sampling_rationale: "Smaller-scale, slots-focused, strongly promotional challenger brand — lower-traffic-tier comparator."
+
+  - alias: stake_com
+    brand_name: "Stake.com"
+    operator_alias: medium_rare
+    primary_domain: "stake.com"
+    brand_type: crypto
+    primary_market: null
+    active_markets: []
+    restricted_markets: ["GB"]
+    crypto_supported: true
+    research_priority: 3
+    sampling_rationale: "Crypto-native comparator explicitly retained per spec §14 as a comparator that is NOT GB-licensed — never to be blended into GB-market benchmarks; included to contrast product/UX/positioning only."
+    notes: "Not licensed for the Great Britain market at time of seeding; access from GB is restricted. Retain all comparisons clearly separated from GB-licensed brand figures."
