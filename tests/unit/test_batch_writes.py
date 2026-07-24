@@ -55,6 +55,51 @@ def test_append_observation_batch_of_many_rows_is_one_call_per_row_not_per_cell(
     assert fake_service.call_log.count("append") == 2
 
 
+def test_append_records_batch_is_two_calls_regardless_of_row_count(sheets_writer, fake_service):
+    header = ["record_id", "source_id", "name"]
+    fake_service.add_sheet("Bulk", header)
+    fake_service.call_log.clear()
+
+    records = [{"record_id": f"r_{i}", "name": f"n_{i}"} for i in range(25)]
+    results = sheets_writer.append_records("Bulk", records, actor="tester")
+
+    # 25 records => 1 append for all data rows + 1 append for all Change Log
+    # entries = 2 calls, NOT 50. This is what keeps a bulk seed under quota.
+    assert fake_service.call_log.count("append") == 2
+    assert len(results) == 25
+    assert len(fake_service.sheets["Bulk"]) == 26  # header + 25 rows
+
+
+def test_registry_bulk_load_seeds_within_a_handful_of_calls(fake_service, sheets_writer):
+    from casino_intel.services.registry_service import RegistryService
+    from casino_intel.sheets.schema_definitions import SHEET_HEADERS
+
+    fake_service.add_sheet("Operators", SHEET_HEADERS["Operators"])
+    fake_service.add_sheet("Brands", SHEET_HEADERS["Brands"])
+    fake_service.add_sheet("Licences", SHEET_HEADERS["Licences"])
+    service = RegistryService(sheets_writer)
+    fake_service.call_log.clear()
+
+    service.bulk_load(
+        operators=[{"operator_name": f"Op {i}"} for i in range(15)],
+        brands=[
+            {
+                "brand_name": f"Brand {i}",
+                "operator_id": "placeholder",
+                "primary_domain": f"b{i}.example",
+                "brand_type": "casino_only",
+            }
+            for i in range(20)
+        ],
+        actor="tester",
+    )
+
+    # 15 operators + 20 brands = 35 records. Row-by-row this was 70 append
+    # calls (and blew the 60/min quota); batched it is 4 (operators rows +
+    # operators change-log + brands rows + brands change-log).
+    assert fake_service.call_log.count("append") == 4
+
+
 def test_ensure_tabs_and_headers_writes_all_headers_in_one_batch_call(sheets_client, fake_service):
     fake_service.call_log.clear()
 

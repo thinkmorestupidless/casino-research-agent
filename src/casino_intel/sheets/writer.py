@@ -86,6 +86,47 @@ class SheetsWriter:
         )
         return AppendResult(written=not self.dry_run, record_id=str(record.get("record_id", "")))
 
+    def append_records(
+        self,
+        sheet_name: str,
+        records: list[dict[str, object]],
+        *,
+        actor: str,
+        ingestion_run_id: str | None = None,
+    ) -> list[AppendResult]:
+        """Append many rows to one sheet in a SINGLE append call, with all
+        their Change Log entries written in a single second call.
+
+        For bulk, non-Observation writes (e.g. seeding Operators/Brands) this
+        keeps the whole batch to two API requests instead of two-per-record,
+        staying well under the Sheets per-minute write quota. Not for
+        canonical Observations — those must go through ``append_observation``
+        for fingerprint dedup.
+        """
+        if not records:
+            return []
+        header = self._header(sheet_name)
+        rows = [escape_row([record.get(col, "") for col in header]) for record in records]
+        if not self.dry_run:
+            self.client.append_rows(sheet_name, rows)
+        self.change_log.log_many(
+            [
+                {
+                    "actor": actor,
+                    "action": ChangeLogAction.CREATE,
+                    "sheet_name": sheet_name,
+                    "record_id": str(record.get("record_id", "")),
+                    "source_id": record.get("source_id"),
+                    "ingestion_run_id": ingestion_run_id,
+                }
+                for record in records
+            ]
+        )
+        return [
+            AppendResult(written=not self.dry_run, record_id=str(record.get("record_id", "")))
+            for record in records
+        ]
+
     def append_observation(
         self,
         sheet_name: str,

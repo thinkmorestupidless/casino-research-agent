@@ -84,7 +84,13 @@ class FakeSheetsService:
             (ranges,) = rest
             value_ranges = []
             for r in ranges:
-                value_ranges.append({"range": r, "values": self._read_range(r)})
+                # The real Sheets API echoes a NORMALISED range (adds column/
+                # row bounds, quotes tab names with spaces) that rarely equals
+                # the requested string. Emulate that so the client is forced to
+                # key results by the requested range, not the response range.
+                value_ranges.append(
+                    {"range": self._normalise_range(r), "values": self._read_range(r)}
+                )
             return {"valueRanges": value_ranges}
         if kind == "valuesBatchUpdate":
             (body,) = rest
@@ -114,6 +120,16 @@ class FakeSheetsService:
         raise NotImplementedError(kind)
 
     # -- tiny A1-range engine --------------------------------------------------------
+
+    @staticmethod
+    def _normalise_range(r: str) -> str:
+        """Mimic the Sheets API's range normalisation: quote tab names that
+        contain spaces and append a synthetic bound, so the echoed range does
+        not string-equal the requested one."""
+        sheet, _, a1 = r.partition("!")
+        if " " in sheet:
+            sheet = f"'{sheet}'"
+        return f"{sheet}!{a1}:ZZ999"
 
     def _read_range(self, r: str) -> list[list[str]]:
         if m := _CELL_RANGE.match(r):

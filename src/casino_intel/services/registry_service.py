@@ -26,6 +26,18 @@ class RegistryService:
     def __init__(self, writer: SheetsWriter) -> None:
         self.writer = writer
 
+    @staticmethod
+    def _build_row(model_cls, entity_type: str, sheet: str, fields: dict[str, Any], actor: str):
+        now = datetime.now(UTC)
+        record = model_cls(
+            record_id=fields.get("record_id") or new_id(entity_type),
+            created_at=now,
+            created_by=actor,
+            updated_at=now,
+            **{k: v for k, v in fields.items() if k != "record_id"},
+        )
+        return to_sheet_record(record.model_dump(mode="json"), SHEET_HEADERS[sheet])
+
     def register_operator(
         self, fields: dict[str, Any], *, actor: str, ingestion_run_id: str | None = None
     ) -> AppendResult:
@@ -74,6 +86,38 @@ class RegistryService:
             LICENCES_SHEET, row, actor=actor, ingestion_run_id=ingestion_run_id
         )
 
+    def register_operators(
+        self, operators: list[dict[str, Any]], *, actor: str, ingestion_run_id: str | None = None
+    ) -> list[AppendResult]:
+        """Register many operators in a single batched append (two API calls
+        total: rows + Change Log), preserving input order in the results."""
+        rows = [self._build_row(Operator, "operator", OPERATORS_SHEET, o, actor) for o in operators]
+        return self.writer.append_records(
+            OPERATORS_SHEET, rows, actor=actor, ingestion_run_id=ingestion_run_id
+        )
+
+    def register_brands(
+        self, brands: list[dict[str, Any]], *, actor: str, ingestion_run_id: str | None = None
+    ) -> list[AppendResult]:
+        """Register many brands in a single batched append. `operator_id` FKs
+        must already be resolved by the caller."""
+        rows = [self._build_row(Brand, "brand", BRANDS_SHEET, b, actor) for b in brands]
+        return self.writer.append_records(
+            BRANDS_SHEET, rows, actor=actor, ingestion_run_id=ingestion_run_id
+        )
+
+    def register_licences(
+        self, licences: list[dict[str, Any]], *, actor: str, ingestion_run_id: str | None = None
+    ) -> list[AppendResult]:
+        """Register many licences in a single batched append."""
+        rows = [
+            self._build_row(Licence, "licence", LICENCES_SHEET, licence, actor)
+            for licence in licences
+        ]
+        return self.writer.append_records(
+            LICENCES_SHEET, rows, actor=actor, ingestion_run_id=ingestion_run_id
+        )
+
     def bulk_load(
         self,
         *,
@@ -84,22 +128,19 @@ class RegistryService:
         ingestion_run_id: str | None = None,
     ) -> dict[str, list[AppendResult]]:
         """Register operators, then brands (so `operator_id` FKs resolve),
-        then licences. Returns the generated IDs mapped by input index, so
-        the caller (the seed loader) can cross-reference alias -> record_id.
+        then licences. Each entity type is written as one batched append so a
+        full pilot seed stays within the Sheets per-minute write quota.
+        Returns the generated IDs in input order, so the caller (the seed
+        loader) can cross-reference alias -> record_id.
         """
-        operator_results = [
-            self.register_operator(o, actor=actor, ingestion_run_id=ingestion_run_id)
-            for o in operators
-        ]
-        brand_results = [
-            self.register_brand(b, actor=actor, ingestion_run_id=ingestion_run_id) for b in brands
-        ]
-        licence_results = [
-            self.register_licence(licence, actor=actor, ingestion_run_id=ingestion_run_id)
-            for licence in (licences or [])
-        ]
         return {
-            "operators": operator_results,
-            "brands": brand_results,
-            "licences": licence_results,
+            "operators": self.register_operators(
+                operators, actor=actor, ingestion_run_id=ingestion_run_id
+            ),
+            "brands": self.register_brands(
+                brands, actor=actor, ingestion_run_id=ingestion_run_id
+            ),
+            "licences": self.register_licences(
+                licences or [], actor=actor, ingestion_run_id=ingestion_run_id
+            ),
         }

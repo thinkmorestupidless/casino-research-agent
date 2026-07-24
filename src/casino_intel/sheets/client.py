@@ -56,16 +56,26 @@ class SheetsClient:
         reraise=True,
     )
     def batch_get_values(self, ranges: list[str]) -> dict[str, list[list[Any]]]:
-        """Read one or more A1 ranges in a single API call."""
+        """Read one or more A1 ranges in a single API call.
+
+        Keyed by the *requested* range string, not the range echoed in the
+        response: the Sheets API normalises ranges (``Operators!1:1`` ->
+        ``Operators!A1:AE1``, quotes tab names containing spaces, adds row
+        bounds), so keying by the response range would make every caller's
+        ``result.get(requested_range)`` miss and silently read empty. The API
+        returns ``valueRanges`` in request order, so we zip them back to the
+        strings the caller passed in.
+        """
         response = (
             self._service.spreadsheets()
             .values()
             .batchGet(spreadsheetId=self.spreadsheet_id, ranges=ranges)
             .execute()
         )
+        value_ranges = response.get("valueRanges", [])
         result: dict[str, list[list[Any]]] = {}
-        for value_range in response.get("valueRanges", []):
-            result[value_range["range"]] = value_range.get("values", [])
+        for requested, value_range in zip(ranges, value_ranges, strict=False):
+            result[requested] = value_range.get("values", [])
         return result
 
     @retry(
