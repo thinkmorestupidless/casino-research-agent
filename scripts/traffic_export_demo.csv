@@ -1,0 +1,2 @@
+brand_id,domain,provider,geography,device_scope,period_start,period_end,estimated_visits,estimated_unique_visitors,visit_duration_seconds,pages_per_visit,bounce_rate,traffic_share_direct,traffic_share_organic,traffic_share_paid,traffic_share_referral,traffic_share_social,traffic_share_display,top_referral_domains,top_destination_domains,provider_methodology_version
+brand_PLACEHOLDER,bet365.com,similarweb,GB,all,2026-06-01,2026-06-30,9800000,6100000,240,5.4,38.2,41.0,26.0,18.0,9.0,4.0,2.0,affiliatehub.example,helpcentre.example,2026.2

@@ -52,11 +52,16 @@ def import_traffic_rows(
     observation_service: ObservationService,
     actor: str,
     ingestion_run_id: str | None = None,
+    document_id: str | None = None,
 ) -> list[str]:
     """Each row of `table` must carry `brand_id`, `domain`, `provider`, and
     should carry `geography`/`device_scope`/`period_start`/`period_end`
     plus zero or more of the metric columns above. Returns the list of
     newly-created `Traffic` row ids (empty entries skipped as duplicates).
+
+    When the export has been archived as a `Document`, pass its `document_id`
+    so both the canonical observations and the `Traffic` view row link back to
+    the archived file (data-model.md optional `document_id` FK).
     """
     created_ids: list[str] = []
     now = datetime.now(UTC)
@@ -84,6 +89,7 @@ def import_traffic_rows(
                     metric_id=metric_id,
                     raw_value=str(row[column]),
                     source_id=source_id,
+                    document_id=document_id,
                     evidence_type="third_party_estimate",
                     confidence="medium",
                     normalised_numeric_value=_to_float(row[column]),
@@ -111,7 +117,7 @@ def import_traffic_rows(
             "status": "active",
             "notes": "",
             "source_id": source_id,
-            "document_id": "",
+            "document_id": document_id or "",
             "evidence_type": "third_party_estimate",
             "confidence": "medium",
             "review_status": "unreviewed",
