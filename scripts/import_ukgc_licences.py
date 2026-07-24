@@ -7,7 +7,11 @@ licence register is a clean, authoritative bulk dataset. This links each
 registered brand to its real licensed entity **by domain** (the register's
 domain-names dataset), which is authoritative and avoids guessing legal-entity
 names, then writes that entity's real licences (number, type, status, dates,
-licensee legal name) against the brand's operator, sourced to the register.
+licensee legal name), sourced to the register.
+
+Operator = the licensed legal entity (consistent with the Anjouan/MGA imports),
+created/reused per licensee with the commercial group (from the matched brand's
+operator) recorded as ultimate_parent.
 
 Matching by domain also surfaces seed discrepancies (a domain registered to an
 entity unrelated to the seed's attributed operator) — pass those brands via
@@ -170,16 +174,55 @@ def main(argv: list[str] | None = None) -> int:
                 return s
         return "unknown"
 
-    licence_fields = []
+    # Operator = the licensed legal entity (consistent with the Anjouan/MGA
+    # imports), with the commercial group recorded as ultimate_parent. We map
+    # each account to its group (via the brand's operator), then create/reuse an
+    # operator for the account's legal entity and link the licence to that.
+    op_rows = _read_col(ctx, "Operators", ["record_id", "operator_name"])
+    opid_to_name = {r["record_id"]: r["operator_name"] for r in op_rows}
+    name_to_opid: dict[str, str] = {}
+    for r in op_rows:
+        name_to_opid.setdefault(r["operator_name"], r["record_id"])
+
+    service = RegistryService(ctx.writer)
     conflicts = []
+    account_plan: dict[str, dict] = {}
     for acct, ops in sorted(acct_ops.items()):
         if len(ops) != 1:
             conflicts.append((acct, biz.get(acct, "?"), ops))
             continue
-        operator_id = next(iter(ops))
         bids = acct_brands[acct]
-        brand_id = next(iter(bids)) if len(bids) == 1 else None
-        legal = biz.get(acct, "")
+        account_plan[acct] = {
+            "entity": biz.get(acct, "").strip(),
+            "group_name": opid_to_name.get(next(iter(ops)), ""),
+            "brand_id": next(iter(bids)) if len(bids) == 1 else None,
+        }
+
+    # Create operators for licensed entities not already present.
+    to_create = []
+    seen_new: set[str] = set()
+    for pl in account_plan.values():
+        e = pl["entity"]
+        if e and e not in name_to_opid and e not in seen_new:
+            seen_new.add(e)
+            to_create.append((e, pl["group_name"]))
+    print(f"New entity operators to create: {len(to_create)}")
+    if not args.dry_run and to_create:
+        fields = [
+            {"operator_name": e, "ultimate_parent": g, "source_id": args.source_id}
+            for e, g in to_create
+        ]
+        results = service.register_operators(
+            fields, actor=ACTOR, ingestion_run_id=ctx.ingestion_run_id
+        )
+        for (e, _), r in zip(to_create, results, strict=True):
+            name_to_opid[e] = r.record_id
+
+    licence_fields = []
+    for acct, pl in account_plan.items():
+        operator_id = name_to_opid.get(pl["entity"], "")
+        brand_id = pl["brand_id"]
+        legal = pl["entity"]
         sub = lic[lic["Account Number"] == acct]
         for num, grp in sub.groupby("Licence Number"):
             num = str(num).strip()
@@ -222,7 +265,6 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  {a} {legal} -> operators {ops}")
 
     if not args.dry_run and licence_fields:
-        service = RegistryService(ctx.writer)
         results = service.register_licences(
             licence_fields, actor=ACTOR, ingestion_run_id=ctx.ingestion_run_id
         )
