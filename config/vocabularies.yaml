@@ -138,6 +138,7 @@ brand_types:
   - crypto
   - sweepstakes
   - hybrid
+  - unknown
 
 licence_types:
   - remote_casino
