@@ -124,6 +124,7 @@ class BrandType(StrEnum):
     CRYPTO = "crypto"
     SWEEPSTAKES = "sweepstakes"
     HYBRID = "hybrid"
+    UNKNOWN = "unknown"
 
 
 class OwnershipType(StrEnum):
