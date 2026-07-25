@@ -474,3 +474,36 @@ def test_compute_all_brands_raises_when_registry_empty(sheets_client):
     assert compute_all_brands(sheets_client, now=NOW) == []
     with pytest.raises(NoBrandsRegisteredError):
         refresh_summary_sheet(sheets_client, now=NOW)
+
+
+def test_observation_value_labels_normalised_figure_in_gbp_not_raw_currency():
+    """Regression: a USD figure normalised to GBP must be labelled GBP, not the
+    raw currency (previously the GBP value was tagged with the USD unit)."""
+    from casino_intel.reporting.completeness import _observation_value
+
+    usd_to_gbp = {
+        "normalised_numeric_value": "11097920000",
+        "normalised_currency": "GBP",
+        "normalised_unit": "USD",  # raw currency — must NOT be used as the label
+        "raw_value": "14048000000",
+        "raw_unit": "USD",
+        "currency": "USD",
+    }
+    out = _observation_value(usd_to_gbp)
+    assert "GBP" in out and "USD" not in out
+
+    # non-currency figure still keeps its own unit
+    customers = {"normalised_numeric_value": "13898000", "normalised_unit": "customers"}
+    assert _observation_value(customers) == "13898000 customers"
+
+
+def test_prefer_approved_favours_approved_else_all():
+    """Regression: an unapproved figure must not beat an approved one for the
+    same signal, but unreviewed data still shows when nothing is approved."""
+    from casino_intel.reporting.completeness import _prefer_approved
+
+    mixed = [{"review_status": "unreviewed", "v": 1}, {"review_status": "approved", "v": 2}]
+    assert _prefer_approved(mixed) == [{"review_status": "approved", "v": 2}]
+
+    only_unreviewed = [{"review_status": "unreviewed", "v": 3}]
+    assert _prefer_approved(only_unreviewed) == only_unreviewed
