@@ -177,6 +177,18 @@ class DerivationEngine:
                 formulas.marketing_pct_revenue,
                 "",
             ),
+            # Many operators report a combined "sales & marketing" line rather
+            # than a standalone marketing_expense; accept it as the marketing
+            # proxy so marketing_pct_revenue still derives (recorded in the
+            # assumptions). An operator that reports BOTH would yield two rows,
+            # each labelled by its input line.
+            (
+                "marketing_pct_revenue",
+                "sales_and_marketing_expense",
+                "revenue",
+                formulas.marketing_pct_revenue,
+                "Marketing proxied by the reported sales & marketing (S&M) expense line.",
+            ),
             (
                 "adjusted_ebitda_margin",
                 "adjusted_ebitda",
