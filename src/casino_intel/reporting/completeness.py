@@ -23,13 +23,14 @@ gap — never as a blank cell that could be mistaken for zero or "fine".
 Design note on filtering: rows with `status` of `rejected` or `superseded`
 are excluded (a rejected/superseded row is not a current fact; its
 replacement, if any, will already be picked up by the latest-value lookup).
-`review_status` is deliberately *not* used as a hard filter — an
-`unreviewed`/`machine_checked` observation is still shown, honestly labelled
-with its own evidence/confidence markers, because hiding it would work
-against this feature's purpose (an honest picture rather than a falsely
-tidy one). The `refresh-summary` contract's "current active/approved data"
-phrasing is read as a description of the workbook's overall data quality
-bar, not a literal `review_status == approved` gate on every domain sheet.
+`review_status` is used as a soft *preference*, not a hard filter
+(`_prefer_approved`): when a signal has any `approved` row, approved rows win
+(so an unapproved figure never beats an approved one for the same signal —
+e.g. a whole-group revenue that was left unapproved must not displace the
+approved segment figure); but when nothing is approved yet, `unreviewed`/
+`machine_checked` rows are still shown, honestly labelled with their own
+evidence/confidence markers, because hiding them would work against this
+feature's purpose (an honest picture rather than a falsely tidy one).
 """
 
 from __future__ import annotations
@@ -253,6 +254,15 @@ def _active_rows(rows: list[dict[str, str]]) -> list[dict[str, str]]:
     return [r for r in rows if r.get("status", "") not in _EXCLUDED_STATUSES]
 
 
+def _prefer_approved(rows: list[dict[str, str]]) -> list[dict[str, str]]:
+    """When any matching row is `approved`, restrict to approved rows; else
+    return them all. This makes the summary favour reviewed data (so an
+    unapproved figure never wins over an approved one for the same signal)
+    while still showing unreviewed data when that's all there is."""
+    approved = [r for r in rows if r.get("review_status") == "approved"]
+    return approved or rows
+
+
 # --- date handling -----------------------------------------------------------------
 
 
@@ -313,7 +323,10 @@ def _pick_latest(
 def _observation_value(row: dict[str, str]) -> str:
     nval = row.get("normalised_numeric_value")
     if nval not in (None, ""):
-        unit = row.get("normalised_unit") or ""
+        # The normalised value is expressed in the normalised currency (GBP
+        # after an FX conversion), so label it with that — not normalised_unit,
+        # which carries the RAW currency and would tag a GBP figure as USD/EUR.
+        unit = row.get("normalised_currency") or row.get("normalised_unit") or ""
         return f"{nval} {unit}".strip()
     raw = row.get("raw_value") or ""
     if not raw:
@@ -382,7 +395,7 @@ def _observation_signal(
         and o.get("subject_id") == subject_id
         and o.get("metric_id") == metric_id
     ]
-    found = _pick_latest(matches, ("captured_at", "as_of_date", "period_end"))
+    found = _pick_latest(_prefer_approved(matches), ("captured_at", "as_of_date", "period_end"))
     if not found:
         return SignalValue(label=label)
     return _build_signal(label, found, now, _observation_value(found[0]))
